@@ -27,8 +27,8 @@ interface TaskDao {
     suspend fun deleteTask(taskId: Int)
 
     @Query("SELECT * FROM tasks WHERE completed = 0")
-    suspend fun readActiveTasks(): List<Task>
+    fun readActiveTasks(): Flow<List<Task>>
 
     @Query("SELECT * FROM tasks WHERE completed = 1")
-    suspend fun readCompletedTasks(): List<Task>
+    fun readCompletedTasks(): Flow<List<Task>>
 }

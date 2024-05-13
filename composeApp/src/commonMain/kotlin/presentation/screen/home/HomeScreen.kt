@@ -35,18 +35,20 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import domain.RequestState
 import domain.Task
+import domain.TaskAction
 import presentation.components.ErrorScreen
 import presentation.components.LoadingScreen
 import presentation.components.TaskView
+import presentation.screen.task.TaskScreen
 
 class HomeScreen : Screen {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-   //     val viewModel = getScreenModel<HomeViewModel>()
-     //   val activeTasks by viewModel.activeTasks
-    //    val completedTasks by viewModel.completedTasks
+        val viewModel = getScreenModel<HomeViewModel>()
+        val activeTasks by viewModel.activeTaks
+        val completedTasks by viewModel.completedTasks
 
 
         Scaffold(
@@ -76,35 +78,35 @@ class HomeScreen : Screen {
             ) {
                 DisplayTasks(
                     modifier = Modifier.weight(1f),
-                    tasks = RequestState.Idle,
+                    tasks = activeTasks,
                     onSelect = { selectedTask ->
-                      //  navigator.push(TaskScreen(selectedTask))
+                        navigator.push(TaskScreen(selectedTask))
                     },
                     onFavorite = { task, isFavorite ->
-//                        viewModel.setAction(
-//                            action = TaskAction.SetFavorite(task, isFavorite)
-//                        )
+                        viewModel.setAction(
+                            action = TaskAction.SetFavorite(task, isFavorite)
+                        )
                     },
                     onComplete = { task, completed ->
-//                        viewModel.setAction(
-//                            action = TaskAction.SetCompleted(task, completed)
-//                        )
+                        viewModel.setAction(
+                            action = TaskAction.SetCompleted(task, completed)
+                        )
                     }
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 DisplayTasks(
                     modifier = Modifier.weight(1f),
-                    tasks = RequestState.Idle,
+                    tasks = completedTasks,
                     showActive = false,
                     onComplete = { task, completed ->
-//                        viewModel.setAction(
-//                            action = TaskAction.SetCompleted(task, completed)
-//                        )
+                        viewModel.setAction(
+                            action = TaskAction.SetCompleted(task, completed)
+                        )
                     },
                     onDelete = { task ->
-//                        viewModel.setAction(
-//                            action = TaskAction.Delete(task)
-//                        )
+                        viewModel.setAction(
+                            action = TaskAction.Delete(task)
+                        )
                     },
                 )
             }

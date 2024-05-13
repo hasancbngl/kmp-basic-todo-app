@@ -6,14 +6,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
-import androidx.room.Room
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
-import data.getRoomDatabase
+import data.TaskDatabase
+import data.TaskRepository
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.core.context.startKoin
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import presentation.screen.home.HomeScreen
+import presentation.screen.home.HomeViewModel
+import presentation.screen.task.TaskViewModel
 
 val lightRedColor = Color(color = 0xFFF57D88)
 val darkRedColor = Color(color = 0xFF77000B)
@@ -21,8 +24,6 @@ val darkRedColor = Color(color = 0xFF77000B)
 @Composable
 @Preview
 fun App() {
-    initializeKoin()
-
     val lightColors = lightColorScheme(
         primary = lightRedColor,
         onPrimary = darkRedColor,
@@ -47,13 +48,22 @@ fun App() {
     }
 }
 
+val platformModule = module {
+    singleOf(::DatabaseBuilder)
+}
+
 val koinModule = module {
     single { getRoomDatabase(get()) }
-    single { getRoomDatabase(get()).taskDao() }
+    single { get<TaskDatabase>().taskDao() }
+
+    // Repository and ViewModels
+    single { TaskRepository(get()) }
+    factory { HomeViewModel(get()) }
+    factory { TaskViewModel(get()) }
 }
 
 fun initializeKoin() {
     startKoin {
-        modules(koinModule)
+        modules(koinModule, platformModule)
     }
 }
