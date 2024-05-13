@@ -19,6 +19,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import domain.Task
 import kmp_todo_app.composeapp.generated.resources.Res
+import kmp_todo_app.composeapp.generated.resources.delete
+import kmp_todo_app.composeapp.generated.resources.star
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 

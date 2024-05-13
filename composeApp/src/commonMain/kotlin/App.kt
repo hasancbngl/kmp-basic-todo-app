@@ -6,10 +6,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
+import androidx.room.Room
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
-import org.jetbrains.compose.resources.ExperimentalResourceApi
+import data.getRoomDatabase
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.core.context.startKoin
+import org.koin.dsl.module
 import presentation.screen.home.HomeScreen
 
 val lightRedColor = Color(color = 0xFFF57D88)
@@ -18,6 +21,8 @@ val darkRedColor = Color(color = 0xFF77000B)
 @Composable
 @Preview
 fun App() {
+    initializeKoin()
+
     val lightColors = lightColorScheme(
         primary = lightRedColor,
         onPrimary = darkRedColor,
@@ -39,5 +44,16 @@ fun App() {
         Navigator(HomeScreen()) {
             SlideTransition(it)
         }
+    }
+}
+
+val koinModule = module {
+    single { getRoomDatabase(get()) }
+    single { getRoomDatabase(get()).taskDao() }
+}
+
+fun initializeKoin() {
+    startKoin {
+        modules(koinModule)
     }
 }
