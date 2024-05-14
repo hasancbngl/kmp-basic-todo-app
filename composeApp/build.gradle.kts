@@ -16,6 +16,7 @@ kotlin {
             }
         }
     }
+    task("testClasses")
     
     jvm("desktop")
     
@@ -27,9 +28,10 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+            linkerOpts.add("-lsqlite3")
         }
     }
-    
+
     sourceSets {
         val desktopMain by getting
         
