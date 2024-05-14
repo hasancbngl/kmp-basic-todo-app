@@ -96,7 +96,7 @@ fun TaskScreen(
                                 )
                             )
                         }
-                        navController.popBackStack()
+                        navController.navigateUp()
                     },
                     shape = RoundedCornerShape(size = 12.dp)
                 ) {

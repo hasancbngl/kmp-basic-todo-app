@@ -26,7 +26,11 @@ class TaskRepository(private val taskDao: TaskDao) {
     }
 
     suspend fun deleteTask(taskId: Int) {
-        taskDao.deleteTask(taskId)
+        try {
+            taskDao.deleteTask(taskId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     fun readActiveTasks(): Flow<RequestState<List<Task>>> {
