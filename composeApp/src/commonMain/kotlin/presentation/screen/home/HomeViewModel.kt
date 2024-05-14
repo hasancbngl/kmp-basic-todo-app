@@ -2,10 +2,8 @@ package presentation.screen.home
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.room.Dao
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
-import data.TaskDao
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import data.TaskRepository
 import domain.RequestState
 import domain.Task
@@ -21,7 +19,7 @@ typealias Tasks = MutableState<RequestState<List<Task>>>
 
 class HomeViewModel(
     private val repository: TaskRepository
-) : ScreenModel {
+) : ViewModel() {
     private var _activeTasks : MutableTasks = mutableStateOf(RequestState.Idle)
     val activeTaks : Tasks = _activeTasks
     private var _completedTasks : MutableTasks = mutableStateOf(RequestState.Idle)
@@ -30,13 +28,13 @@ class HomeViewModel(
     init {
         _activeTasks.value = RequestState.Loading
         _completedTasks.value = RequestState.Loading
-        screenModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.Main) {
             delay(500)
             repository.readActiveTasks().collectLatest {
                 _activeTasks.value = it
             }
         }
-        screenModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.Main) {
             delay(500)
             repository.readCompletedTasks().collectLatest {
                 _completedTasks.value = it
@@ -63,19 +61,19 @@ class HomeViewModel(
     }
 
     private fun setCompleted(task: Task, completed: Boolean) {
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.setTaskCompleted(task.id, completed)
         }
     }
 
     private fun setFavorite(task: Task, isFavorite: Boolean) {
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.setTaskFavorite(task.id, isFavorite)
         }
     }
 
     private fun deleteTask(task: Task) {
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.deleteTask(task.id)
         }
     }

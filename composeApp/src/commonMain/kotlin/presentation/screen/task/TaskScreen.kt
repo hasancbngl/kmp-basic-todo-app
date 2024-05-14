@@ -22,104 +22,106 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.getScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import domain.Task
 import domain.TaskAction
 
 const val DEFAULT_TITLE = "Enter the Title"
 const val DEFAULT_DESCRIPTION = "Add some description"
 
-data class TaskScreen(val task: Task? = null) : Screen {
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getScreenModel<TaskViewModel>()
-        var currentTitle by remember {
-            mutableStateOf(task?.title ?: DEFAULT_TITLE)
-        }
-        var currentDescription by remember {
-            mutableStateOf(task?.description ?: DEFAULT_DESCRIPTION)
-        }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TaskScreen(
+    viewModel: TaskViewModel,
+    navController: NavController,
+    task: Task? = null
+) {
+    //  val navigator = LocalNavigator.currentOrThrow
+    val viewModel = viewModel<TaskViewModel>()
+    var currentTitle by remember {
+        mutableStateOf(task?.title ?: DEFAULT_TITLE)
+    }
+    var currentDescription by remember {
+        mutableStateOf(task?.description ?: DEFAULT_DESCRIPTION)
+    }
 
-        Scaffold (
-            topBar = {
-                TopAppBar(
-                    title = {
-                        BasicTextField(
-                            textStyle = TextStyle(
-                                color = MaterialTheme.colorScheme.onSurface,
-                                fontSize = MaterialTheme.typography.titleLarge.fontSize
-                            ),
-                            singleLine = true,
-                            value = currentTitle,
-                            onValueChange = { currentTitle = it }
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = { navigator.pop() }) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                                contentDescription = "Back Arrow"
-                            )
-                        }
-                    }
-                )
-            },
-            floatingActionButton = {
-                if (currentTitle.isNotEmpty() && currentDescription.isNotEmpty()) {
-                    FloatingActionButton(
-                        onClick = {
-                            if (task != null) {
-                                viewModel.setAction(
-                                    action = TaskAction.Update(
-                                        Task().apply {
-                                            id = task.id
-                                            title = currentTitle
-                                            description = currentDescription
-                                        }
-                                    )
-                                )
-                            } else {
-                                viewModel.setAction(
-                                    action = TaskAction.Add(
-                                        Task().apply {
-                                            title = currentTitle
-                                            description = currentDescription
-                                        }
-                                    )
-                                )
-                            }
-                            navigator.pop()
-                        },
-                        shape = RoundedCornerShape(size = 12.dp)
-                    ) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    BasicTextField(
+                        textStyle = TextStyle(
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = MaterialTheme.typography.titleLarge.fontSize
+                        ),
+                        singleLine = true,
+                        value = currentTitle,
+                        onValueChange = { currentTitle = it }
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }) {
                         Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = "Checkmark Icon"
+                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            contentDescription = "Back Arrow"
                         )
                     }
                 }
-            }
-        ) { padding ->
-            BasicTextField(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(all = 24.dp)
-                    .padding(
-                        top = padding.calculateTopPadding(),
-                        bottom = padding.calculateBottomPadding()
-                    ),
-                textStyle = TextStyle(
-                    fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                    color = MaterialTheme.colorScheme.onSurface
-                ),
-                value = currentDescription,
-                onValueChange = { description -> currentDescription = description }
             )
+        },
+        floatingActionButton = {
+            if (currentTitle.isNotEmpty() && currentDescription.isNotEmpty()) {
+                FloatingActionButton(
+                    onClick = {
+                        if (task != null) {
+                            viewModel.setAction(
+                                action = TaskAction.Update(
+                                    Task().apply {
+                                        id = task.id
+                                        title = currentTitle
+                                        description = currentDescription
+                                    }
+                                )
+                            )
+                        } else {
+                            viewModel.setAction(
+                                action = TaskAction.Add(
+                                    Task().apply {
+                                        title = currentTitle
+                                        description = currentDescription
+                                    }
+                                )
+                            )
+                        }
+                        navController.popBackStack()
+                    },
+                    shape = RoundedCornerShape(size = 12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = "Checkmark Icon"
+                    )
+                }
+            }
         }
+    ) { padding ->
+        BasicTextField(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(all = 24.dp)
+                .padding(
+                    top = padding.calculateTopPadding(),
+                    bottom = padding.calculateBottomPadding()
+                ),
+            textStyle = TextStyle(
+                fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                color = MaterialTheme.colorScheme.onSurface
+            ),
+            value = currentDescription,
+            onValueChange = { description -> currentDescription = description }
+        )
     }
 }

@@ -38,6 +38,8 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             // Room
             implementation(libs.androidx.room.paging)
+            implementation(libs.koin.android)
+            implementation(libs.koin.androidx.compose)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -46,17 +48,16 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            //navigator, animation and koin
-            implementation(libs.navigator)
-            implementation(libs.navigator.screen.model)
-            implementation(libs.navigator.transitions)
-            implementation(libs.navigator.koin)
             implementation(libs.koin.core)
 
             // Room
             implementation(libs.androidx.paging.common)
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
+            api(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.lifecycle.viewmodel)
+            implementation(libs.navigation.compose)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

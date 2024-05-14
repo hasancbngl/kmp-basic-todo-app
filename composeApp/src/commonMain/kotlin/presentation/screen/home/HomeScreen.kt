@@ -29,10 +29,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.getScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import domain.RequestState
 import domain.Task
 import domain.TaskAction
@@ -41,75 +39,74 @@ import presentation.components.LoadingScreen
 import presentation.components.TaskView
 import presentation.screen.task.TaskScreen
 
-class HomeScreen : Screen {
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getScreenModel<HomeViewModel>()
-        val activeTasks by viewModel.activeTaks
-        val completedTasks by viewModel.completedTasks
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreen(viewModel: HomeViewModel,navController: NavController){
+    val activeTasks by viewModel.activeTaks
+    val completedTasks by viewModel.completedTasks
 
 
-        Scaffold(
-            topBar = {
-                CenterAlignedTopAppBar(title = { Text("Home") })
-            },
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = {},
-                    shape = RoundedCornerShape(size = 12.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "icon"
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(title = { Text("Home") })
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                          navController.navigate("taskScreen")
+                },
+                shape = RoundedCornerShape(size = 12.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "icon"
+                )
+            }
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 24.dp)
+                .padding(
+                    top = paddingValues.calculateTopPadding(),
+                    bottom = paddingValues.calculateBottomPadding()
+                )
+        ) {
+            DisplayTasks(
+                modifier = Modifier.weight(1f),
+                tasks = activeTasks,
+                onSelect = { selectedTask ->
+                    navController.navigate("taskScreen")
+                },
+                onFavorite = { task, isFavorite ->
+                    viewModel.setAction(
+                        action = TaskAction.SetFavorite(task, isFavorite)
+                    )
+                },
+                onComplete = { task, completed ->
+                    viewModel.setAction(
+                        action = TaskAction.SetCompleted(task, completed)
                     )
                 }
-            }
-        ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 24.dp)
-                    .padding(
-                        top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding()
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            DisplayTasks(
+                modifier = Modifier.weight(1f),
+                tasks = completedTasks,
+                showActive = false,
+                onComplete = { task, completed ->
+                    viewModel.setAction(
+                        action = TaskAction.SetCompleted(task, completed)
                     )
-            ) {
-                DisplayTasks(
-                    modifier = Modifier.weight(1f),
-                    tasks = activeTasks,
-                    onSelect = { selectedTask ->
-                        navigator.push(TaskScreen(selectedTask))
-                    },
-                    onFavorite = { task, isFavorite ->
-                        viewModel.setAction(
-                            action = TaskAction.SetFavorite(task, isFavorite)
-                        )
-                    },
-                    onComplete = { task, completed ->
-                        viewModel.setAction(
-                            action = TaskAction.SetCompleted(task, completed)
-                        )
-                    }
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-                DisplayTasks(
-                    modifier = Modifier.weight(1f),
-                    tasks = completedTasks,
-                    showActive = false,
-                    onComplete = { task, completed ->
-                        viewModel.setAction(
-                            action = TaskAction.SetCompleted(task, completed)
-                        )
-                    },
-                    onDelete = { task ->
-                        viewModel.setAction(
-                            action = TaskAction.Delete(task)
-                        )
-                    },
-                )
-            }
+                },
+                onDelete = { task ->
+                    viewModel.setAction(
+                        action = TaskAction.Delete(task)
+                    )
+                },
+            )
         }
     }
 }

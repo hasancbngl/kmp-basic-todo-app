@@ -6,16 +6,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
-import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.transitions.SlideTransition
-import data.TaskDatabase
-import data.TaskRepository
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.core.context.startKoin
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.module
+import org.koin.compose.KoinContext
+import org.koin.compose.currentKoinScope
+import org.koin.core.context.KoinContext
 import presentation.screen.home.HomeScreen
 import presentation.screen.home.HomeViewModel
+import presentation.screen.task.TaskScreen
 import presentation.screen.task.TaskViewModel
 
 val lightRedColor = Color(color = 0xFFF57D88)
@@ -42,28 +44,27 @@ fun App() {
 
 
     MaterialTheme(colorScheme = colors) {
-        Navigator(HomeScreen()) {
-            SlideTransition(it)
+        KoinContext {
+
+        val navController = rememberNavController()
+
+        NavHost(navController = navController, startDestination = "homeScreen"){
+            composable("homeScreen"){
+                val viewModel = koinViewModel<HomeViewModel>()
+                HomeScreen(viewModel,navController)
+            }
+            composable("taskScreen"){
+                val taskViewModel = koinViewModel<TaskViewModel>()
+                TaskScreen(taskViewModel,navController,null)
+            }
         }
     }
-}
+}}
 
-val platformModule = module {
-    singleOf(::DatabaseBuilder)
-}
-
-val koinModule = module {
-    single { getRoomDatabase(get()) }
-    single { get<TaskDatabase>().taskDao() }
-
-    // Repository and ViewModels
-    single { TaskRepository(get()) }
-    factory { HomeViewModel(get()) }
-    factory { TaskViewModel(get()) }
-}
-
-fun initializeKoin() {
-    startKoin {
-        modules(koinModule, platformModule)
+@Composable
+inline fun <reified T: ViewModel> koinViewModel(): T {
+    val scope = currentKoinScope()
+    return viewModel {
+        scope.get<T>()
     }
 }
