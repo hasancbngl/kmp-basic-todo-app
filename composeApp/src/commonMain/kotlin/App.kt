@@ -12,9 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.KoinContext
 import org.koin.compose.currentKoinScope
-import org.koin.core.context.KoinContext
 import presentation.screen.home.HomeScreen
 import presentation.screen.home.HomeViewModel
 import presentation.screen.task.TaskScreen
