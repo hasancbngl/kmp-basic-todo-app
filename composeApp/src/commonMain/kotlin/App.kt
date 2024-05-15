@@ -25,7 +25,10 @@ val darkRedColor = Color(color = 0xFF77000B)
 
 @Composable
 @Preview
-fun App() {
+fun App(
+    homeViewModel: HomeViewModel? = null,
+    taskViewModel: TaskViewModel? = null
+) {
     val lightColors = lightColorScheme(
         primary = lightRedColor,
         onPrimary = darkRedColor,
@@ -44,25 +47,30 @@ fun App() {
 
 
     MaterialTheme(colorScheme = colors) {
-        KoinContext {
-
         val navController = rememberNavController()
-
-        NavHost(navController = navController, startDestination = "homeScreen"){
-            composable("homeScreen"){
+        NavHost(navController = navController, startDestination = "homeScreen") {
+            composable("homeScreen") {
                 val viewModel = koinViewModel<HomeViewModel>()
-                HomeScreen(viewModel,navController)
+                if (getPlatform().isDesktop) {
+                    if (homeViewModel != null) {
+                        HomeScreen(homeViewModel, navController)
+                    }
+                } else HomeScreen(viewModel, navController)
             }
-            composable("taskScreen"){
-                val taskViewModel = koinViewModel<TaskViewModel>()
-                TaskScreen(taskViewModel,navController,null)
+            composable("taskScreen") {
+                val viewModel = koinViewModel<TaskViewModel>()
+                if (getPlatform().isDesktop){
+                    if (taskViewModel != null) {
+                        TaskScreen(taskViewModel, navController, null)
+                    }
+                } else TaskScreen(viewModel, navController, null)
             }
         }
     }
-}}
+}
 
 @Composable
-inline fun <reified T: ViewModel> koinViewModel(): T {
+inline fun <reified T : ViewModel> koinViewModel(): T {
     val scope = currentKoinScope()
     return viewModel {
         scope.get<T>()

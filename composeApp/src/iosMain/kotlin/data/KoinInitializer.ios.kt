@@ -8,7 +8,6 @@ import org.koin.dsl.module
 actual class KoinInitializer {
     actual fun init() {
         startKoin {
-
             modules(viewModelModule,    module {
                 single { getDatabaseBuilder() }
                 single { getRoomDatabase(get()) }

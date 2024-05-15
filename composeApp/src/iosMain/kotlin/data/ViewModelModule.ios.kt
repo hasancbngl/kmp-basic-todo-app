@@ -6,6 +6,8 @@ import presentation.screen.home.HomeViewModel
 import presentation.screen.task.TaskViewModel
 
 actual val viewModelModule = module {
-    singleOf(::HomeViewModel)
-    singleOf(::TaskViewModel)
+  //  singleOf(::HomeViewModel)
+    //singleOf(::TaskViewModel)
+    factory { HomeViewModel(get()) }
+    factory { TaskViewModel(get()) }
 }
