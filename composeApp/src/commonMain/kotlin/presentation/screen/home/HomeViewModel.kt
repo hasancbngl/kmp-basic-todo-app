@@ -8,6 +8,7 @@ import data.TaskRepository
 import domain.RequestState
 import domain.Task
 import domain.TaskAction
+import getPlatform
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
@@ -24,17 +25,18 @@ class HomeViewModel(
     val activeTaks : Tasks = _activeTasks
     private var _completedTasks : MutableTasks = mutableStateOf(RequestState.Idle)
     val completedTasks : Tasks = _completedTasks
+    
 
     init {
         _activeTasks.value = RequestState.Loading
         _completedTasks.value = RequestState.Loading
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
             delay(500)
             repository.readActiveTasks().collectLatest {
                 _activeTasks.value = it
             }
         }
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
             delay(500)
             repository.readCompletedTasks().collectLatest {
                 _completedTasks.value = it

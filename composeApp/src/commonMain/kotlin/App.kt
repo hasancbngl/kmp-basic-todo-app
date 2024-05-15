@@ -50,20 +50,24 @@ fun App(
         val navController = rememberNavController()
         NavHost(navController = navController, startDestination = "homeScreen") {
             composable("homeScreen") {
-                val viewModel = koinViewModel<HomeViewModel>()
                 if (getPlatform().isDesktop) {
                     if (homeViewModel != null) {
                         HomeScreen(homeViewModel, navController)
                     }
-                } else HomeScreen(viewModel, navController)
+                } else{
+                    val viewModel = koinViewModel<HomeViewModel>()
+                    HomeScreen(viewModel, navController)
+                }
             }
             composable("taskScreen") {
-                val viewModel = koinViewModel<TaskViewModel>()
                 if (getPlatform().isDesktop){
                     if (taskViewModel != null) {
                         TaskScreen(taskViewModel, navController, null)
                     }
-                } else TaskScreen(viewModel, navController, null)
+                } else {
+                    val viewModel = koinViewModel<TaskViewModel>()
+                    TaskScreen(viewModel, navController, null)
+                }
             }
         }
     }

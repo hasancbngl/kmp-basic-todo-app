@@ -1,3 +1,4 @@
+import com.android.build.gradle.tasks.detectAnnotationProcessors
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
@@ -62,6 +63,7 @@ kotlin {
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(libs.kotlinx.coroutines.jvm)
         }
     }
 }
@@ -84,6 +86,7 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            resources.excludes += "DebugProbesKt.bin"
         }
     }
     buildTypes {
@@ -117,6 +120,7 @@ dependencies {
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
     add("kspIosX64", libs.androidx.room.compiler)
     add("kspIosArm64", libs.androidx.room.compiler)
+    add("kspDesktop", libs.androidx.room.compiler)
 }
 
 room {
