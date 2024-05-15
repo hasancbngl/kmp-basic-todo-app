@@ -1,7 +1,9 @@
 package presentation.screen.home
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -72,10 +74,12 @@ fun HomeScreen(viewModel: HomeViewModel,navController: NavController){
                 .padding(
                     top = paddingValues.calculateTopPadding(),
                     bottom = paddingValues.calculateBottomPadding()
-                )
+                ),
+            verticalArrangement = Arrangement.Center
         ) {
             DisplayTasks(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.fillMaxWidth()
+                    .fillMaxHeight(.5f),
                 tasks = activeTasks,
                 onSelect = { selectedTask ->
                     navController.navigate("taskScreen")
@@ -93,7 +97,7 @@ fun HomeScreen(viewModel: HomeViewModel,navController: NavController){
             )
             Spacer(modifier = Modifier.height(24.dp))
             DisplayTasks(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.fillMaxSize(),
                 tasks = completedTasks,
                 showActive = false,
                 onComplete = { task, completed ->
@@ -162,7 +166,7 @@ fun DisplayTasks(
         )
     }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = modifier) {
         Text(
             modifier = Modifier.padding(horizontal = 12.dp),
             text = if (showActive) "Active Tasks" else "Completed Tasks",
@@ -175,7 +179,7 @@ fun DisplayTasks(
             onError = { ErrorScreen(message = it) },
             onSuccess = {
                 if (it.isNotEmpty()) {
-                    LazyColumn(modifier = Modifier.padding(horizontal = 24.dp)) {
+                    LazyColumn(modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)) {
                         items(
                             items = it,
                             key = { task -> task.id?.toHexString().toString() }
@@ -199,7 +203,7 @@ fun DisplayTasks(
                             )
                         }
                     }
-                } else ErrorScreen()
+                } else Spacer(modifier = Modifier.height(10.dp))
             }
         )
     }

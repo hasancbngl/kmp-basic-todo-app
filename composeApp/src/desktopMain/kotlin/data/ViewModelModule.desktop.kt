@@ -9,6 +9,4 @@ actual val viewModelModule: Module
     get() = module {
         factory { HomeViewModel(get()) }
         factory { TaskViewModel(get()) }
-        singleOf(::HomeViewModel)
-        singleOf(::TaskViewModel)
     }
