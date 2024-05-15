@@ -12,11 +12,7 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         title = "kmp-todo-app",
     ) {
-        val db = getRoomDatabase(getDatabaseBuilder())
-        val repo = TaskRepository(db.taskDao())
-        App(
-            homeViewModel = HomeViewModel(repo),
-            taskViewModel = TaskViewModel(repo)
-        )
+        KoinInitializer().init()
+        App()
     }
 }

@@ -25,10 +25,7 @@ val darkRedColor = Color(color = 0xFF77000B)
 
 @Composable
 @Preview
-fun App(
-    homeViewModel: HomeViewModel? = null,
-    taskViewModel: TaskViewModel? = null
-) {
+fun App() {
     val lightColors = lightColorScheme(
         primary = lightRedColor,
         onPrimary = darkRedColor,
@@ -50,24 +47,12 @@ fun App(
         val navController = rememberNavController()
         NavHost(navController = navController, startDestination = "homeScreen") {
             composable("homeScreen") {
-                if (getPlatform().isDesktop) {
-                    if (homeViewModel != null) {
-                        HomeScreen(homeViewModel, navController)
-                    }
-                } else{
                     val viewModel = koinViewModel<HomeViewModel>()
                     HomeScreen(viewModel, navController)
-                }
             }
             composable("taskScreen") {
-                if (getPlatform().isDesktop){
-                    if (taskViewModel != null) {
-                        TaskScreen(taskViewModel, navController, null)
-                    }
-                } else {
                     val viewModel = koinViewModel<TaskViewModel>()
                     TaskScreen(viewModel, navController, null)
-                }
             }
         }
     }

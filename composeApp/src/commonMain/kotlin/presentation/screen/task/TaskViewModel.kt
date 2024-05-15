@@ -27,13 +27,13 @@ class TaskViewModel(
     }
 
     private fun addTask(task: Task) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             repository.addTask(task)
         }
     }
 
     private fun updateTask(task: Task) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             repository.updateTask(task)
         }
     }

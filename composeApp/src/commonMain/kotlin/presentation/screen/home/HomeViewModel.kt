@@ -30,13 +30,13 @@ class HomeViewModel(
     init {
         _activeTasks.value = RequestState.Loading
         _completedTasks.value = RequestState.Loading
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             delay(500)
             repository.readActiveTasks().collectLatest {
                 _activeTasks.value = it
             }
         }
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             delay(500)
             repository.readCompletedTasks().collectLatest {
                 _completedTasks.value = it
@@ -63,19 +63,19 @@ class HomeViewModel(
     }
 
     private fun setCompleted(task: Task, completed: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             repository.setTaskCompleted(task.id, completed)
         }
     }
 
     private fun setFavorite(task: Task, isFavorite: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             repository.setTaskFavorite(task.id, isFavorite)
         }
     }
 
     private fun deleteTask(task: Task) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             repository.deleteTask(task.id)
         }
     }
